@@ -1517,7 +1517,7 @@ export class StatusCard extends LitElement {
   private _handleExtraEntityAction(entity_id: string): (ev: ActionHandlerEvent) => void {
   return (ev: ActionHandlerEvent) => {
     ev.stopPropagation();
-
+    console.log('Action event:', ev.detail.action, 'für Entity:', entity_id);
     const customization = this.getCustomizationForType(entity_id);
 
     let actionFromCustomization: ActionConfig | undefined;
