@@ -1937,7 +1937,7 @@ export class StatusCard extends LitElement {
         pointer-events: auto;
       }
       sl-tab * {
-        pointer-events: none;
+        pointer-events: auto;
       }
       sl-tab::part(base) {
         padding: 0 8px !important;
