@@ -1742,10 +1742,15 @@ private _handleExtraEntityAction(entity_id: string): (ev: ActionHandlerEvent) =>
 
               return html`
                 <sl-tab
-                  @click="${() => this.showMoreInfo(entity)}"
                   slot="nav"
                   panel=${entity.entity_id}
-                >
+                  @action=${this._handleExtraEntityAction(entity.entity_id)}
+                  .actionHandler=${actionHandler({
+                    hasTap: !!this.getCustomizationForType(entity.entity_id)?.tap_action,
+                    hasHold: !!this.getCustomizationForType(entity.entity_id)?.hold_action,
+                    hasDoubleClick: !!this.getCustomizationForType(entity.entity_id)?.double_tap_action,
+                  })}
+                 >
                   <div class="extra-entity">
                     <div class="entity-icon" style=${styleMap(iconStyles)}>
                       ${icon &&
