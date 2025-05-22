@@ -745,8 +745,13 @@ export class StatusCard extends LitElement {
         <sl-tab
           slot="nav"
           panel=${entity.entity_id}
-          @click="${() => this.showMoreInfo(entity)}"
-        >
+          @action=${this._handleExtraEntityAction(entity.entity_id)}
+          .actionHandler=${actionHandler({
+            hasTap: !!this.getCustomizationForType(entity.entity_id)?.tap_action,
+            hasHold: !!this.getCustomizationForType(entity.entity_id)?.hold_action,
+            hasDoubleClick: !!this.getCustomizationForType(entity.entity_id)?.double_tap_action,
+          })}
+        />
           <div class="entity">
             <div class="entity-icon" style=${styleMap(iconStyles)}>
               ${entity.attributes.entity_picture
