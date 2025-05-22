@@ -780,7 +780,70 @@ export class StatusCard extends LitElement {
       `;
     });
   }
+private _handleExtraEntityAction(entity_id: string): (ev: ActionHandlerEvent) => void {
+  return (ev: ActionHandlerEvent) => {
+    ev.stopPropagation();
 
+    const customization = this.getCustomizationForType(entity_id);
+
+    let actionFromCustomization: ActionConfig | undefined;
+    let actionFromConfig: ActionConfig | undefined;
+
+    if (ev.detail.action === "tap") {
+      actionFromCustomization = customization?.tap_action
+        ? { ...customization.tap_action }
+        : undefined;
+      actionFromConfig = this._config?.tap_action
+        ? { ...this._config.tap_action }
+        : undefined;
+    } else if (ev.detail.action === "hold") {
+      actionFromCustomization = customization?.hold_action
+        ? { ...customization.hold_action }
+        : undefined;
+      actionFromConfig = this._config?.hold_action
+        ? { ...this._config.hold_action }
+        : undefined;
+    } else if (ev.detail.action === "double_tap") {
+      actionFromCustomization = customization?.double_tap_action
+        ? { ...customization.double_tap_action }
+        : undefined;
+      actionFromConfig = this._config?.double_tap_action
+        ? { ...this._config.double_tap_action }
+        : undefined;
+    }
+
+    const actionConfig =
+      actionFromCustomization !== undefined
+        ? actionFromCustomization
+        : actionFromConfig;
+
+    const entity = this.hass!.states[entity_id];
+    if (!entity) return;
+
+    if (
+      !actionConfig ||
+      (typeof actionConfig === "string" && actionConfig === "more-info") ||
+      (typeof actionConfig === "object" && actionConfig.action === "more-info")
+    ) {
+      this.showMoreInfo(entity);
+      return;
+    }
+
+    if (actionConfig.action === "navigate" && actionConfig.navigation_path) {
+      window.location.assign(actionConfig.navigation_path);
+      return;
+    }
+    if (actionConfig.action === "url" && actionConfig.url_path) {
+      window.open(actionConfig.url_path, "_blank");
+      return;
+    }
+    if (actionConfig.action === "toggle") {
+      this.hass.callService("homeassistant", "toggle", {
+        entity_id: entity.entity_id,
+      });
+      return;
+    }
+    
   private loadExtraEntities(): {
     type: string;
     entities: HassEntity[];
@@ -1504,6 +1567,76 @@ export class StatusCard extends LitElement {
     };
   }
 
+
+
+
+
+  private _handleExtraEntityAction(entity_id: string): (ev: ActionHandlerEvent) => void {
+  return (ev: ActionHandlerEvent) => {
+    ev.stopPropagation();
+
+    const customization = this.getCustomizationForType(entity_id);
+
+    let actionFromCustomization: ActionConfig | undefined;
+    let actionFromConfig: ActionConfig | undefined;
+
+    if (ev.detail.action === "tap") {
+      actionFromCustomization = customization?.tap_action
+        ? { ...customization.tap_action }
+        : undefined;
+      actionFromConfig = this._config?.tap_action
+        ? { ...this._config.tap_action }
+        : undefined;
+    } else if (ev.detail.action === "hold") {
+      actionFromCustomization = customization?.hold_action
+        ? { ...customization.hold_action }
+        : undefined;
+      actionFromConfig = this._config?.hold_action
+        ? { ...this._config.hold_action }
+        : undefined;
+    } else if (ev.detail.action === "double_tap") {
+      actionFromCustomization = customization?.double_tap_action
+        ? { ...customization.double_tap_action }
+        : undefined;
+      actionFromConfig = this._config?.double_tap_action
+        ? { ...this._config.double_tap_action }
+        : undefined;
+    }
+
+    const actionConfig =
+      actionFromCustomization !== undefined
+        ? actionFromCustomization
+        : actionFromConfig;
+
+    const entity = this.hass!.states[entity_id];
+    if (!entity) return;
+
+    if (
+      !actionConfig ||
+      (typeof actionConfig === "string" && actionConfig === "more-info") ||
+      (typeof actionConfig === "object" && actionConfig.action === "more-info")
+    ) {
+      this.showMoreInfo(entity);
+      return;
+    }
+
+    if (actionConfig.action === "navigate" && actionConfig.navigation_path) {
+      window.location.assign(actionConfig.navigation_path);
+      return;
+    }
+    if (actionConfig.action === "url" && actionConfig.url_path) {
+      window.open(actionConfig.url_path, "_blank");
+      return;
+    }
+    if (actionConfig.action === "toggle") {
+      this.hass.callService("homeassistant", "toggle", {
+        entity_id: entity.entity_id,
+      });
+      return;
+    }
+    // ...weitere Aktionen nach Bedarf
+  };
+}
   protected render() {
     const configContent = this._config.content || [];
     const domainContent = configContent.filter(
